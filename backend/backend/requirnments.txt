@@ -1,5 +1,0 @@
-project_id = 6991983d1903a12c34bb21b1
-connect_url = mongodb+srv://<db_username>:<db_password>@clusteruser.wpzrrer.mongodb.net/?appName=Clusteruser
-user_name = milan-solanki
-pass = Milan9898933741
-IP = 152.59.53.98
