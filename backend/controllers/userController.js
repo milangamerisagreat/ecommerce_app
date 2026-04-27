@@ -8,9 +8,6 @@ import { sendOTPemail } from "../emailVerify/sendOTPemail.js";
 
 export const register = async (req, res) => {
   try {
-    console.log("BODY:", req.body);
-    console.log("REGISTER SECRET:", process.env.JWT_SECRET);
-
     const { firstName, lastName, email, password } = req.body || {};
 
     if (!firstName || !lastName || !email || !password) {
@@ -20,9 +17,9 @@ export const register = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
-    if (user) {
+    if (existingUser) {
       return res.status(400).json({
         success: false,
         message: "User already exists",
@@ -38,26 +35,27 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "10m",
-    });
+    const token = jwt.sign(
+      { id: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "10m" }
+    );
 
-    verifyemail.sendVerificationEmail(token, email);
+    await verifyemail.sendVerificationEmail(token, email);
 
     newUser.tokens = token;
     await newUser.save();
 
     return res.status(201).json({
       success: true,
+      message: "User registered successfully",
       user: newUser,
       token,
-      message: "User registered successfully",
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Error registering user",
-      error: error.message,
+      message: error.message || "Error registering user",
     });
   }
 };

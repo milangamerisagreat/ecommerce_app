@@ -19,7 +19,7 @@ export const sendVerificationEmail = (token, email) => {
     from: process.env.MAIL_USER,
     to: email,
     subject: "Email Verification",
-    text: `Please verify your email by clicking the following link: http://localhost:${process.env.PORT1}/verify-email?token=${token}`,
+    text: `Please verify your email by clicking the following link: http://localhost:5173/verify-email/${token}`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
