@@ -156,7 +156,7 @@ export const reVerify = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    console.log("BODY:", req.body);
+    
 
     const { email, password } = req.body || {};
 
@@ -219,6 +219,12 @@ export const login = async (req, res) => {
       message: "Login successful",
       accessToken,
       refreshToken,
+       user: {
+    _id: existingUser._id,
+    firstName: existingUser.firstName,
+    lastName: existingUser.lastName,
+    email: existingUser.email,
+  }
     });
   } catch (error) {
     return res.status(500).json({
@@ -231,17 +237,20 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    const userId = req.user.id;
-    await Session.deleteMany({ userId: userId });
+    const userId = req.user._id; 
 
-    const user = await User.findByIdAndUpdate(userId, {
+    await Session.deleteMany({ userId });
+
+    await User.findByIdAndUpdate(userId, {
       isLoggedin: false,
       tokens: null,
     });
+
     return res.status(200).json({
       success: true,
       message: "Logout successful",
     });
+
   } catch (error) {
     return res.status(500).json({
       success: false,
