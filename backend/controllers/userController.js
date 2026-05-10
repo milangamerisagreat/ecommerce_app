@@ -167,6 +167,7 @@ export const login = async (req, res) => {
       });
     }
 
+   
     const existingUser = await User.findOne({ email });
 
     if (!existingUser) {
@@ -210,6 +211,9 @@ export const login = async (req, res) => {
     existingUser.isLoggedin = true;
     existingUser.tokens = accessToken;
     await existingUser.save();
+    const user = await User.findById(existingUser._id).select(
+      "-password -tokens -otp -otpExpiry"
+    );
 
     await Session.deleteMany({ userId: existingUser._id });
     await Session.create({ userId: existingUser._id });
@@ -219,12 +223,8 @@ export const login = async (req, res) => {
       message: "Login successful",
       accessToken,
       refreshToken,
-       user: {
-    _id: existingUser._id,
-    firstName: existingUser.firstName,
-    lastName: existingUser.lastName,
-    email: existingUser.email,
-  }
+      user,
+
     });
   } catch (error) {
     return res.status(500).json({
