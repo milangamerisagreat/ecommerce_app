@@ -434,3 +434,51 @@ export const getUserById = async (req, res) => {
     });
   }
 };
+
+export const updateProfile = async (req, res) => {
+  try {
+
+    const userId = req.user.id;
+
+    const {
+      firstName,
+      lastName,
+      email,
+    } = req.body;
+
+    const updatedData = {
+      firstName,
+      lastName,
+      email,
+    };
+
+    if (req.file) {
+
+      updatedData.profilepic = req.file.path;
+
+      updatedData.profilepicpublicid = req.file.filename;
+
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updatedData,
+      { new: true }
+    ).select("-password -tokens -otp -otpExpiry");
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: "Error updating profile",
+      error: error.message,
+    });
+
+  }
+};
