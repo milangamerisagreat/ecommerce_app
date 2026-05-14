@@ -5,6 +5,7 @@ import * as verifyemail from "../emailVerify/verifyEmail.js";
 import Session from "../models/sessionModel.js";
 import { send } from "process";
 import { sendOTPemail } from "../emailVerify/sendOTPemail.js";
+import cloudinary from "../config/cloudinary.js";
 
 export const register = async (req, res) => {
   try {
@@ -446,30 +447,35 @@ export const updateProfile = async (req, res) => {
       email,
     } = req.body;
 
-    const updatedData = {
-      firstName,
-      lastName,
-      email,
-    };
+    const user = await User.findById(userId);
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.email = email;
 
     if (req.file) {
 
-      updatedData.profilepic = req.file.path;
+      if (user.profilepicpublicid) {
 
-      updatedData.profilepicpublicid = req.file.filename;
+        await cloudinary.uploader.destroy(
+          user.profilepicpublicid
+        );
+
+      }
+
+      user.profilepic = req.file.path;
+
+      user.profilepicpublicid =
+        req.file.filename || req.file.public_id;
 
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      updatedData,
-      { new: true }
-    ).select("-password -tokens -otp -otpExpiry");
+    await user.save();
 
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      user: updatedUser,
+      user,
     });
 
   } catch (error) {
@@ -481,4 +487,52 @@ export const updateProfile = async (req, res) => {
     });
 
   }
+};
+
+export const updateAddress = async (
+  req,
+  res
+) => {
+
+  try {
+
+    const userId = req.user._id;
+
+    const {
+      address,
+      city,
+      zipcode,
+      phoneNo,
+    } = req.body;
+
+    const updatedUser =
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          address,
+          city,
+          zipcode,
+          phoneNo,
+        },
+        { new: true }
+      ).select(
+        "-password -tokens -otp -otpExpiry"
+      );
+
+    return res.status(200).json({
+      success: true,
+      message: "Address updated successfully",
+      user: updatedUser,
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: "Error updating address",
+      error: error.message,
+    });
+
+  }
+
 };
