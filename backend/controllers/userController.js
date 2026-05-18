@@ -262,10 +262,21 @@ export const logout = async (req, res) => {
 };
 
 export const forgotPassword = async (req, res) => {
-  console.log("EMAIL:", req.body.email);
+  
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
+
+    if (
+  user.otpExpiry &&
+  user.otpExpiry < Date.now()
+) {
+  user.otp = null;
+  user.otpExpiry = null;
+  user.isOTPverified = false;
+
+  await user.save();
+}
 
     if (!user) {
       return res.status(404).json({
@@ -275,7 +286,7 @@ export const forgotPassword = async (req, res) => {
     };
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = Date.now() + 10 * 60 * 1000; //10 minutes
+    const otpExpiry = Date.now() + 2 * 60 * 1000; //10 minutes
     user.otp = otp;
     user.otpExpiry = otpExpiry;
     await user.save();
@@ -300,7 +311,7 @@ export const verifyOTP = async (req, res) => {
     const { otp } = req.body;
     const email = req.params.email;
 
-    const user = await User.findOne({ email }); // 👈 yaha define
+    const user = await User.findOne({ email }); 
 
     if (!user) {
       return res.status(404).json({
@@ -309,8 +320,7 @@ export const verifyOTP = async (req, res) => {
       });
     }
 
-    console.log("DB OTP:", user.otp);
-    console.log("DB EXPIRY:", user.otpExpiry);
+  
 
     if (user.otp == null || user.otpExpiry == null) {
       return res.status(400).json({
@@ -320,6 +330,12 @@ export const verifyOTP = async (req, res) => {
     }
 
     if (user.otpExpiry < Date.now()) {
+
+      user.otp = null;
+  user.otpExpiry = null;
+  user.isOTPverified = false;
+
+  await user.save();
       return res.status(400).json({
         success: false,
         message: "OTP expired",
@@ -333,8 +349,7 @@ export const verifyOTP = async (req, res) => {
       });
     }
 
-    user.otp = null;
-    user.otpExpiry = null;
+    user.isOTPverified = true
 
     await user.save();
 
@@ -354,9 +369,12 @@ export const verifyOTP = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   try {
-    const {newpassword, conmfirmpassword} = req.body;
-    const {email} = req.params
+
+    const { newPassword, confirmPassword } = req.body;
+    const { email } = req.params;
+
     const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -364,33 +382,50 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    if(!newpassword || !conmfirmpassword) {
+    if (!user.isOTPverified) {
+      return res.status(400).json({
+        success: false,
+        message: "Please verify OTP first",
+      });
+    }
+
+    if (!newPassword || !confirmPassword) {
       return res.status(400).json({
         success: false,
         message: "New password and confirm password are required",
       });
     }
 
-    if (newpassword !== conmfirmpassword) {
+    if (newPassword !== confirmPassword) {
       return res.status(400).json({
         success: false,
         message: "Passwords do not match",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(newpassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
     user.password = hashedPassword;
+
+    user.otp = null;
+    user.otpExpiry = null;
+    user.isOTPverified = false;
+
     await user.save();
+
     return res.status(200).json({
       success: true,
       message: "Password reset successfully",
     });
+
   } catch (error) {
+
     return res.status(500).json({
       success: false,
       message: "Error resetting password",
       error: error.message,
     });
+
   }
 };
 

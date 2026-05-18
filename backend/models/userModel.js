@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     isLoggedin: { type: Boolean, default:false },
     otp: { type: String, default:null },
     otpExpiry: { type: Date, default:null },
+    isOTPverified: {type: Boolean, default: false},
     address: { type: String, default:'' },
     city: { type: String, default:'' },
     zipcode: { type: String, default:'' },

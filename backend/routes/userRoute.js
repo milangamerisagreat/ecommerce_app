@@ -13,7 +13,7 @@ router.post("/reverify", reVerify);
 router.post("/logout", isauthenticated, logout);
 router.post("/forgot-password", forgotPassword);
 router.post("/verify-otp/:email", verifyOTP);
-router.post("/change-password/:email", resetPassword);
+router.post("/reset-password/:email", resetPassword);
 router.get("/get-user", isauthenticated, getUser);
 router.get("/get-user/:userId",  getUserById);
 router.put("/update-profile",isauthenticated,
