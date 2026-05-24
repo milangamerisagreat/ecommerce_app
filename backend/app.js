@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./database/db.js";
 import router from "./routes/userRoute.js";
+import productRouter from "./routes/productRoute.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ const startServer = async () => {
     await connectDB();
 
     app.use("/api/v1/user", router);
+    app.use("/api/v1/product", productRouter);
 
     app.get("/", (req, res) => {
       res.send("");
