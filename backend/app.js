@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./database/db.js";
 import router from "./routes/userRoute.js";
 import productRouter from "./routes/productRoute.js";
+import cartRoute from "./routes/cartRoute.js"
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ const startServer = async () => {
 
     app.use("/api/v1/user", router);
     app.use("/api/v1/product", productRouter);
+    app.use("/api/v1/cart", cartRouter);
 
     app.get("/", (req, res) => {
       res.send("");
