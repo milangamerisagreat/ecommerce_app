@@ -36,11 +36,9 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = jwt.sign(
-      { id: newUser._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "10m" }
-    );
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "10m",
+    });
 
     await verifyemail.sendVerificationEmail(token, email);
 
@@ -157,8 +155,6 @@ export const reVerify = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    
-
     const { email, password } = req.body || {};
 
     if (!email || !password) {
@@ -168,7 +164,6 @@ export const login = async (req, res) => {
       });
     }
 
-   
     const existingUser = await User.findOne({ email });
 
     if (!existingUser) {
@@ -213,7 +208,7 @@ export const login = async (req, res) => {
     existingUser.tokens = accessToken;
     await existingUser.save();
     const user = await User.findById(existingUser._id).select(
-      "-password -tokens -otp -otpExpiry"
+      "-password -tokens -otp -otpExpiry",
     );
 
     await Session.deleteMany({ userId: existingUser._id });
@@ -225,7 +220,6 @@ export const login = async (req, res) => {
       accessToken,
       refreshToken,
       user,
-
     });
   } catch (error) {
     return res.status(500).json({
@@ -238,7 +232,7 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    const userId = req.user._id; 
+    const userId = req.user._id;
 
     await Session.deleteMany({ userId });
 
@@ -251,7 +245,6 @@ export const logout = async (req, res) => {
       success: true,
       message: "Logout successful",
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -262,28 +255,24 @@ export const logout = async (req, res) => {
 };
 
 export const forgotPassword = async (req, res) => {
-  
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
 
-    if (
-  user.otpExpiry &&
-  user.otpExpiry < Date.now()
-) {
-  user.otp = null;
-  user.otpExpiry = null;
-  user.isOTPverified = false;
+    if (user.otpExpiry && user.otpExpiry < Date.now()) {
+      user.otp = null;
+      user.otpExpiry = null;
+      user.isOTPverified = false;
 
-  await user.save();
-}
+      await user.save();
+    }
 
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
-    };
+    }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpiry = Date.now() + 2 * 60 * 1000; //10 minutes
@@ -296,7 +285,6 @@ export const forgotPassword = async (req, res) => {
       success: true,
       message: "OTP sent to email",
     });
-    
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -311,7 +299,7 @@ export const verifyOTP = async (req, res) => {
     const { otp } = req.body;
     const email = req.params.email;
 
-    const user = await User.findOne({ email }); 
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({
@@ -319,8 +307,6 @@ export const verifyOTP = async (req, res) => {
         message: "User not found",
       });
     }
-
-  
 
     if (user.otp == null || user.otpExpiry == null) {
       return res.status(400).json({
@@ -330,12 +316,11 @@ export const verifyOTP = async (req, res) => {
     }
 
     if (user.otpExpiry < Date.now()) {
-
       user.otp = null;
-  user.otpExpiry = null;
-  user.isOTPverified = false;
+      user.otpExpiry = null;
+      user.isOTPverified = false;
 
-  await user.save();
+      await user.save();
       return res.status(400).json({
         success: false,
         message: "OTP expired",
@@ -349,7 +334,7 @@ export const verifyOTP = async (req, res) => {
       });
     }
 
-    user.isOTPverified = true
+    user.isOTPverified = true;
 
     await user.save();
 
@@ -357,7 +342,6 @@ export const verifyOTP = async (req, res) => {
       success: true,
       message: "OTP verified successfully",
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -369,7 +353,6 @@ export const verifyOTP = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   try {
-
     const { newPassword, confirmPassword } = req.body;
     const { email } = req.params;
 
@@ -417,28 +400,22 @@ export const resetPassword = async (req, res) => {
       success: true,
       message: "Password reset successfully",
     });
-
   } catch (error) {
-
     return res.status(500).json({
       success: false,
       message: "Error resetting password",
       error: error.message,
     });
-
   }
 };
 
 export const getUser = async (req, res) => {
   try {
-   const user = await User.findById(req.user._id).select("-password");
+    const user = await User.findById(req.user._id).select("-password");
     return res.status(200).json({
       success: true,
       user,
     });
-
-    
-    
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -448,10 +425,88 @@ export const getUser = async (req, res) => {
   }
 };
 
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+
+    return res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching users",
+      error: error.message,
+    });
+  }
+};
+
+export const adminUpdateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const { firstName, lastName, email, address, city, zipcode, role } =
+      req.body;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (req.user._id.toString() === user._id.toString() && role === "user") {
+      return res.status(403).json({
+        success: false,
+        message: "You cannot remove your own admin access.",
+      });
+    }
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.email = email;
+    user.address = address;
+    user.city = city;
+    user.zipcode = zipcode;
+
+    if (role && ["admin", "user"].includes(role)) {
+      user.role = role;
+    }
+
+    if (req.file) {
+      if (user.profilepicpublicid) {
+        await cloudinary.uploader.destroy(user.profilepicpublicid);
+      }
+
+      user.profilepic = req.file.path;
+      user.profilepicpublicid = req.file.filename || req.file.public_id;
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error updating user",
+      error: error.message,
+    });
+  }
+};
+
 export const getUserById = async (req, res) => {
   try {
-    const {userId} = req.params;
-   const user = await User.findById(userId).select("-password -tokens -otp -otpExpiry");
+    const { userId } = req.params;
+    const user = await User.findById(userId).select(
+      "-password -tokens -otp -otpExpiry",
+    );
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -473,36 +528,26 @@ export const getUserById = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-
     const userId = req.user.id;
 
-    const {
-      firstName,
-      lastName,
-      email,
-    } = req.body;
+    const { firstName, lastName, email, address, city, zipcode } = req.body;
 
     const user = await User.findById(userId);
 
     user.firstName = firstName;
     user.lastName = lastName;
     user.email = email;
+    user.address = address;
+    user.city = city;
+    user.zipcode = zipcode;
 
     if (req.file) {
-
       if (user.profilepicpublicid) {
-
-        await cloudinary.uploader.destroy(
-          user.profilepicpublicid
-        );
-
+        await cloudinary.uploader.destroy(user.profilepicpublicid);
       }
 
       user.profilepic = req.file.path;
-
-      user.profilepicpublicid =
-        req.file.filename || req.file.public_id;
-
+      user.profilepicpublicid = req.file.filename || req.file.public_id;
     }
 
     await user.save();
@@ -512,125 +557,78 @@ export const updateProfile = async (req, res) => {
       message: "Profile updated successfully",
       user,
     });
-
   } catch (error) {
-
     return res.status(500).json({
       success: false,
       message: "Error updating profile",
       error: error.message,
     });
-
   }
 };
 
-export const updateAddress = async (
-  req,
-  res
-) => {
-
+export const updateAddress = async (req, res) => {
   try {
-
     const userId = req.user._id;
 
-    const {
-      address,
-      city,
-      zipcode,
-      phoneNo,
-    } = req.body;
+    const { address, city, zipcode, phoneNo } = req.body;
 
-    const updatedUser =
-      await User.findByIdAndUpdate(
-        userId,
-        {
-          address,
-          city,
-          zipcode,
-          phoneNo,
-        },
-        { new: true }
-      ).select(
-        "-password -tokens -otp -otpExpiry"
-      );
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        address,
+        city,
+        zipcode,
+        phoneNo,
+      },
+      { new: true },
+    ).select("-password -tokens -otp -otpExpiry");
 
     return res.status(200).json({
       success: true,
       message: "Address updated successfully",
       user: updatedUser,
     });
-
   } catch (error) {
-
     return res.status(500).json({
       success: false,
       message: "Error updating address",
       error: error.message,
     });
-
   }
-
 };
 
-export const changePassword = async (
-  req,
-  res
-) => {
-
+export const changePassword = async (req, res) => {
   try {
-
     const userId = req.user._id;
 
-    const {
-      oldPassword,
-      newPassword,
-      confirmPassword,
-    } = req.body;
+    const { oldPassword, newPassword, confirmPassword } = req.body;
 
-    if (
-      !oldPassword ||
-      !newPassword ||
-      !confirmPassword
-    ) {
-
+    if (!oldPassword || !newPassword || !confirmPassword) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
-
     }
 
-    if (
-      newPassword !== confirmPassword
-    ) {
-
+    if (newPassword !== confirmPassword) {
       return res.status(400).json({
         success: false,
         message: "Passwords do not match",
       });
-
     }
 
-    const user = await User.findById(
-      userId
-    ).select("+password");
+    const user = await User.findById(userId).select("+password");
 
-    const isMatch = await bcrypt.compare(
-      oldPassword,
-      user.password
-    );
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
 
     if (!isMatch) {
-
       return res.status(400).json({
         success: false,
         message: "Old password is incorrect",
       });
-
     }
 
-    const hashedPassword =
-      await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     user.password = hashedPassword;
 
@@ -638,18 +636,13 @@ export const changePassword = async (
 
     return res.status(200).json({
       success: true,
-      message:
-        "Password changed successfully",
+      message: "Password changed successfully",
     });
-
   } catch (error) {
-
     return res.status(500).json({
       success: false,
       message: "Error changing password",
       error: error.message,
     });
-
   }
-
 };
