@@ -646,3 +646,88 @@ export const changePassword = async (req, res) => {
     });
   }
 };
+
+export const saveAddresses = async (req, res) => {
+  try {
+    const { addresses } = req.body;
+
+    const user = await User.findById(req.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    user.addresses = addresses;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Addresses saved successfully",
+      addresses: user.addresses,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getAddresses = async (req, res) => {
+  try {
+    const user = await User.findById(req.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      addresses: user.addresses,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const deleteAddress = async (req, res) => {
+  try {
+    const { addressId } = req.params;
+
+    const user = await User.findById(req.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    user.addresses = user.addresses.filter(
+      (address) => address._id.toString() !== addressId
+    );
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Address deleted successfully",
+      addresses: user.addresses,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

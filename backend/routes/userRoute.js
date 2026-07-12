@@ -14,7 +14,10 @@ import {
   updateAddress,
   changePassword,
   getUsers,
-  adminUpdateUser
+  adminUpdateUser,
+  saveAddresses,
+  getAddresses,
+  deleteAddress
  } from "../controllers/userController.js";
 import { isAdmin, isauthenticated } from "../middleware/isAuthonticated.js";
 import upload from "../middleware/multer.js";
@@ -38,7 +41,9 @@ router.get("/get-user/:userId", getUserById);
 router.put("/update-profile",isauthenticated,upload.single("profilepic"),updateProfile);
 router.put("/update-address",isauthenticated,updateAddress);
 router.put("/change-password",isauthenticated,changePassword);
-
+router.post("/addresses", isauthenticated, saveAddresses);
+router.get("/get-addresses", isauthenticated, getAddresses);
+router.delete("/delete-address/:addressId",isauthenticated, deleteAddress);
 
 
 export default router;
