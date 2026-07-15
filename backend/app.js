@@ -5,6 +5,7 @@ import connectDB from "./database/db.js";
 import router from "./routes/userRoute.js";
 import productRouter from "./routes/productRoute.js";
 import cartRouter from "./routes/cartRoute.js"
+import orderRouter from "./routes/orderRoute.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ const startServer = async () => {
     app.use("/api/v1/user", router);
     app.use("/api/v1/product", productRouter);
     app.use("/api/v1/cart", cartRouter);
+    app.use("/api/v1/order", orderRouter);
 
     app.get("/", (req, res) => {
       res.send("");
