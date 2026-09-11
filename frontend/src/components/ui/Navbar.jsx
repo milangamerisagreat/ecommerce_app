@@ -3,7 +3,7 @@ import { useState } from "react";
 import logo from '../../assets/logo4.png'
 import { Link } from 'react-router-dom'
 import { ShoppingCart } from 'lucide-react'
-import {Button} from './Button'
+import {Button} from './button'
 import axios from 'axios'
 import { useDispatch , useSelector } from "react-redux";
 import { setUser } from "@/redux/userSlice";
