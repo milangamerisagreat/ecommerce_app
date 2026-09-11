@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import * as verifyemail from "../emailVerify/verifyEmail.js";
 import Session from "../models/sessionModel.js";
-import { send } from "process";
 import { sendOTPemail } from "../emailVerify/sendOTPemail.js";
 import cloudinary from "../config/cloudinary.js";
 
