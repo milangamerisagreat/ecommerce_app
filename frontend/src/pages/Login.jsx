@@ -40,7 +40,7 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const res = await api.post("/user/login", formData);
+      const res = await api.post(`/user/login`, formData);
       
       if (res.data.success) {
         toast.success(res.data.message);

@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { toast } from "sonner";
+import api from "@/lib/api";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +38,7 @@ const SignUp = () => {
     
     try{
       setLoading(true);
-      const res = await axios.post(`http://localhost:5000/api/v1/user/register`, formData , {
+      const res = await api.post(`/user/register`, formData , {
         headers: {
           "Content-Type": "application/json"
         }
