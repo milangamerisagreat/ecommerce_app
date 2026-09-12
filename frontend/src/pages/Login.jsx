@@ -68,8 +68,8 @@ const Login = () => {
     }
 
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/v1/user/forgot-password",
+      const { data } = await api.post(
+        `/user/forgot-password`,
         {
           email: formData.email,
         },
