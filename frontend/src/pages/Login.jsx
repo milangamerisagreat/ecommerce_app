@@ -41,7 +41,7 @@ const Login = () => {
     try {
       console.log(res)
       setLoading(true);
-      const res = await axios.post("https://ecommerce-app-lb4h.onrender.com/api/v1/user/login", formData, {});
+      const res = await api.post("/api/v1/user/login", formData, {});
       
       if (res.data.success) {
         toast.success(res.data.message);
