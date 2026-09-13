@@ -71,7 +71,7 @@ const Login = () => {
 
     try {
       const { data } = await api.post(
-        "http://localhost:5000/api/v1/user/forgot-password",
+        "/user/forgot-password",
         {
           email: formData.email,
         },
