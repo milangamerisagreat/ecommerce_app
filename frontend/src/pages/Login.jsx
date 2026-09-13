@@ -39,9 +39,10 @@ const Login = () => {
     e.preventDefault();
      
     try {
-      console.log(res)
+      
       setLoading(true);
       const res = await api.post("/api/v1/user/login", formData, {});
+      console.log(res)
       
       if (res.data.success) {
         toast.success(res.data.message);
