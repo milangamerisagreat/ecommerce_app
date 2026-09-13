@@ -37,10 +37,11 @@ const Login = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
+     
     try {
+      console.log(res)
       setLoading(true);
-      const res = await api.post("/user/login", formData);
+      const res = await axios.post("http://localhost:5000/api/v1/user/login", formData, {});
       
       if (res.data.success) {
         toast.success(res.data.message);
@@ -69,7 +70,7 @@ const Login = () => {
 
     try {
       const { data } = await api.post(
-        "/user/forgot-password",
+        "http://localhost:5000/api/v1/user/forgot-password",
         {
           email: formData.email,
         },
