@@ -40,7 +40,7 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const res = await api.post(`/user/login`, formData);
+      const res = await api.post("/user/login", formData);
       
       if (res.data.success) {
         toast.success(res.data.message);
@@ -69,7 +69,7 @@ const Login = () => {
 
     try {
       const { data } = await api.post(
-        `/user/forgot-password`,
+        "/user/forgot-password",
         {
           email: formData.email,
         },
