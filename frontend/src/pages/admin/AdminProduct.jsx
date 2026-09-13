@@ -40,6 +40,7 @@ import ImageUpload from "@/components/ui/ImageUpload";
 import axios from "axios";
 import { toast } from "sonner";
 import { setProducts } from "@/redux/productSlice";
+import api from "@/lib/api";
 
 const AdminProduct = () => {
   const { products } = useSelector((store) => store.product);
@@ -97,8 +98,8 @@ if(sortOrder === 'HighToLow') {
       });
 
     try {
-      const res = await axios.put(
-        `http://localhost:5000/api/v1/product/update/${editProduct._id}`,
+      const res = await api.put(
+        `/product/update/${editProduct._id}`,
         formData,
         {
           headers: {
@@ -124,8 +125,8 @@ if(sortOrder === 'HighToLow') {
       const remainingProducts = products.filter(
         (product) => product._id !== productId,
       );
-      const res = await axios.delete(
-        `http://localhost:5000/api/v1/product/delete/${productId}`,
+      const res = await api.delete(
+        `/product/delete/${productId}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

@@ -1,4 +1,5 @@
 import OrderCard from "@/components/ui/OrderCard";
+import api from "@/lib/api";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -8,8 +9,8 @@ const MyOrder = () => {
 
   const getUserOrders = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_URL}/api/v1/order/myorder`,
+      const res = await api.get(
+        `/order/myorder`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

@@ -15,6 +15,7 @@ import { Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
+import api from "@/lib/api";
 
 const Addresss = () => {
   const [formData, setFormData] = useState({
@@ -43,8 +44,8 @@ const Addresss = () => {
     try {
       const newAddresses = [...addresses, formData];
 
-      const { data } = await axios.post(
-        "http://localhost:5000/api/v1/user/addresses",
+      const { data } = await api.post(
+        "/user/addresses",
         {
           addresses: newAddresses,
         },
@@ -68,8 +69,8 @@ const Addresss = () => {
 
   const handleDelete = async (addressId) => {
     try {
-      const { data } = await axios.delete(
-        `http://localhost:5000/api/v1/user/delete-address/${addressId}`,
+      const { data } = await api.delete(
+        `/user/delete-address/${addressId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -95,8 +96,8 @@ const Addresss = () => {
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:5000/api/v1/user/get-addresses",
+        const { data } = await api.get(
+          "/user/get-addresses",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -126,8 +127,8 @@ const Addresss = () => {
 
   const handlePayment = async () => {
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_URL}/api/v1/order/create-order`,
+      const { data } = await api.post(
+        "/order/create-order",
         {
           products: cart?.map((item) => ({
             productId: item.productId._id,
@@ -157,8 +158,8 @@ const Addresss = () => {
         description: "Test Transaction",
         handler: async function (response) {
           try {
-            const verifyres = await axios.post(
-              `${import.meta.env.VITE_URL}/api/v1/order/verify-payment`,
+            const verifyres = await api.post(
+              "/order/verify-payment",
               response,
               {
                 headers: {
@@ -182,8 +183,8 @@ const Addresss = () => {
         modal: {
           onDismiss: async function () {
             //handle  user closing the payment modal
-            await axios.post(
-              `${import.meta.env.VITE_URL}/api/v1/order/verify-payment`,
+            await api.post(
+              "/order/verify-payment",
               {
                 razorpay_order_id: null,
                 paymentFailed: true,
@@ -211,8 +212,8 @@ const Addresss = () => {
 
       //listen for payment failure
       rzp.on("payment.failed", async function (response) {
-        await axios.post(
-          `${import.meta.env.VITE_URL}/api/v1/order/verify-payment}`,
+        await api.post(
+          "/order/verify-payment",
           {
             razorpay_order_id: null,
             paymentFailed: true,

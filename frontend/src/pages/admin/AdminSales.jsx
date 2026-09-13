@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import api from '@/lib/api'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
@@ -16,7 +17,7 @@ const AdminSales = () => {
 
   const fetchState = async() => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/order/sales`,{
+      const res = await api.get(`/order/sales`,{
         headers:{
           Authorization:`Bearer ${accessToken}`
         }

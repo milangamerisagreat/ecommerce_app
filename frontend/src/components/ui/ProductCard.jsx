@@ -7,6 +7,7 @@ import {toast} from "sonner"
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {setCart} from "@/redux/productSlice"
+import api from "@/lib/api";
 
 
 const ProductCard = ({ product, loading }) => {
@@ -17,7 +18,7 @@ const ProductCard = ({ product, loading }) => {
 
   const addToCart = async (productId) => {
     try {
-        const response = await axios.post("http://localhost:5000/api/v1/cart/add",{productId}, {
+        const response = await api.post("/cart/add",{productId}, {
           headers:{
             Authorization: `Bearer ${accessToken}`
           }

@@ -8,6 +8,7 @@ import { Camera } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
 import { useLocation } from "react-router-dom";
+import api from "@/lib/api";
 
 const UserInfo = () => {
   const navigate = useNavigate();
@@ -65,8 +66,8 @@ const UserInfo = () => {
         form.append("profilepic", formData.profilepic);
       }
 
-      const { data } = await axios.put(
-        `http://localhost:5000/api/v1/user/admin/update-user/${user._id}`,
+      const { data } = await api.put(
+        `/user/admin/update-user/${user._id}`,
         form,
         {
           headers: {

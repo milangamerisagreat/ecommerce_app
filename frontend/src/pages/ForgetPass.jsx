@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import api from "@/lib/api";
 
 const ForgetPass = () => {
     const location = useLocation();
@@ -83,8 +84,8 @@ const verifyOTP = async (e) => {
 
   try {
 
-    const { data } = await axios.post(
-      `http://localhost:5000/api/v1/user/verify-otp/${email}`,
+    const { data } = await api.post(
+      `/user/verify-otp/${email}`,
       {
         otp: formData.otp,
       }
@@ -106,8 +107,8 @@ const resendOTP = async () => {
 
   try {
 
-    const { data } = await axios.post(
-      "http://localhost:5000/api/v1/user/forgot-password",
+    const { data } = await api.post(
+      "/user/forgot-password",
       {
         email,
       }
@@ -135,8 +136,8 @@ const resetPassword = async (e) => {
 
   try {
 
-    const { data } = await axios.post(
-      `http://localhost:5000/api/v1/user/reset-password/${email}`,
+    const { data } = await api.post(
+      `/user/reset-password/${email}`,
       {
         newPassword: formData.newPassword,
   confirmPassword: formData.confirmPassword,

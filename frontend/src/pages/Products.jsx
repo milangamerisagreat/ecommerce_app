@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import FilterSidebar from "@/components/ui/FilterSidebar";
 import ProductCard from "@/components/ui/ProductCard";
+import api from "@/lib/api";
 
 const items = [
   {
@@ -45,8 +46,8 @@ const Products = () => {
   const getAllProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "http://localhost:5000/api/v1/product/get-all",
+      const response = await api.get(
+        "/product/get-all",
       );
       if (response.data.success) {
         

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import user from "../../assets/user.jpg";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import api from "@/lib/api";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -22,8 +23,8 @@ const AdminUsers = () => {
 
   const getAllUsers = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/v1/user/get-users`,
+      const res = await api.get(
+        `/user/get-users`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

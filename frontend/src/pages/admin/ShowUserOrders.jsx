@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import OrderCard from '@/components/ui/OrderCard'
+import api from '@/lib/api'
 import axios from 'axios'
 import { ArrowLeft } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -14,7 +15,7 @@ const ShowUserOrders = () => {
 
   const getUserOrders = async () => {
    
-    const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/order/user-order/${params.userId}`,{
+    const res = await api.get(`/order/user-order/${params.userId}`,{
       headers:{
         Authorization:`Bearer ${accessToken}`
       }

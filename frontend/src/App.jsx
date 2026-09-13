@@ -27,6 +27,7 @@ import ProtectedRoute from "./components/ui/ProtectedRoute";
 import SingleProducts from "./pages/SingleProducts";
 import Addresss from "./pages/Addresss";
 import Order from "./pages/Order";
+import api from "./lib/api";
 
 const router = createBrowserRouter([
   {
@@ -158,8 +159,8 @@ const App = () => {
 
         dispatch(setToken(token));
 
-        const { data } = await axios.get(
-          "http://localhost:5000/api/v1/user/get-user",
+        const { data } = await api.get(
+          "/user/get-user",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -181,7 +182,7 @@ const App = () => {
 
         if (!token) return;
 
-        const response = await axios.get("http://localhost:5000/api/v1/cart", {
+        const response = await api.get("/cart", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -197,8 +198,8 @@ const App = () => {
 
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/v1/product/get-all",
+        const response = await api.get(
+          "/product/get-all",
         );
 
         if (response.data.success) {

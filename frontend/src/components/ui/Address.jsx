@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/redux/userSlice";
+import api from '@/lib/api';
 
 const Address = ({ user }) => {
   const dispatch = useDispatch();
@@ -42,8 +43,8 @@ const Address = ({ user }) => {
 
   try {
 
-    const { data } = await axios.put(
-      "http://localhost:5000/api/v1/user/update-address",
+    const { data } = await api.put(
+      "/user/update-address",
       {
         address: formData.address,
         city: formData.city,

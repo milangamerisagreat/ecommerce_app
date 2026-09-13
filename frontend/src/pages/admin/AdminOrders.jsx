@@ -1,3 +1,4 @@
+import api from "@/lib/api";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -9,8 +10,8 @@ const AdminOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:5000/api/v1/order/all",
+        const { data } = await api.get(
+          "/order/all",
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

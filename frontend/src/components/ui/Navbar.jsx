@@ -8,6 +8,7 @@ import axios from 'axios'
 import { useDispatch , useSelector } from "react-redux";
 import { setUser } from "@/redux/userSlice";
 import { useNavigate } from "react-router-dom";
+import api from '@/lib/api';
 
 const Navbar = () => {
   
@@ -36,8 +37,8 @@ const handleConfirmLogout = async () => {
     console.log("TOKEN:", token);
 
     if (token) {
-      await axios.post(
-        "http://localhost:5000/api/v1/user/logout",
+      await api.post(
+        "/user/logout",
         {},
         {
           headers: {

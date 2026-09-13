@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { setCart } from "@/redux/productSlice";
 import { toast } from "sonner";
+import api from "@/lib/api";
 
 const Cart = () => {
   const cart = useSelector((store) => store.product.cart);
@@ -21,12 +22,11 @@ const Cart = () => {
   const total = totalPrice + shipping + tax;
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const API = "http://localhost:5000/api/v1/cart"
   const accessToken = localStorage.getItem("accessToken")
 
   const handleUpdateQuantity = async (productId, type) => {
     try {
-      const res = await axios.put(`${API}/update` , {productId, type},{
+      const res = await api.put(`/cart/update` , {productId, type},{
         headers: {
           Authorization:`Bearer ${accessToken}`
         }
@@ -43,7 +43,7 @@ const Cart = () => {
 
   const handleRemove = async (productId) => {
   try {
-    const res = await axios.delete(`${API}/remove`, {
+    const res = await api.delete(`/cart/remove`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

@@ -14,6 +14,7 @@ import { Camera } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import api from "@/lib/api";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState(
@@ -59,8 +60,8 @@ const Profile = () => {
         form.append("profilepic", formData.profilepic);
       }
 
-      const { data } = await axios.put(
-        "http://localhost:5000/api/v1/user/update-profile",
+      const { data } = await api.put(
+        "/user/update-profile",
         form,
         {
           headers: {
@@ -106,8 +107,8 @@ const Profile = () => {
 
   const handleForgotPassword = async () => {
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/v1/user/forgot-password",
+      const { data } = await api.post(
+        "/user/forgot-password",
         {
           email: user.email,
         },
@@ -142,8 +143,8 @@ const Profile = () => {
     }
 
     try {
-      const { data } = await axios.put(
-        "http://localhost:5000/api/v1/user/change-password",
+      const { data } = await api.put(
+        "/user/change-password",
         {
           oldPassword: passwordData.oldPassword,
           newPassword: passwordData.newPassword,
