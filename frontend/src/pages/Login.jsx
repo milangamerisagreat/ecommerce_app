@@ -41,7 +41,7 @@ const Login = () => {
     try {
       
       setLoading(true);
-      const res = await api.post("/api/v1/user/login", formData, {});
+      const res = await api.post("user/login", formData, {});
       console.log(res)
       
       if (res.data.success) {
