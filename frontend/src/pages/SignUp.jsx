@@ -119,7 +119,7 @@ const SignUp = () => {
       
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button onClick={submitHandler} type="submit" className="w-full  bg-[#60b441] hover:bg-[#2bc45e] ">
+          <Button type="submit" className="w-full  bg-[#60b441] hover:bg-[#2bc45e] ">
            {loading? <><Loader2 className=" h-4 w-4 animate-spin mr-2"/> please wait...</> : "Sign Up"}
           </Button>
           <p className="text-[#353535] text-sm">
