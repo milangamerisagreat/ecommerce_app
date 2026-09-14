@@ -1,12 +1,9 @@
 import nodemailer from "nodemailer";
-import crypto from "crypto";
-import {User} from "../models/userModel.js";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-
-export const sendVerificationEmail = (token, email) => {
+export const sendVerificationEmail = async (token, email) => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
@@ -22,11 +19,9 @@ export const sendVerificationEmail = (token, email) => {
     text: `Please verify your email by clicking the following link: ${process.env.FRONTEND_URL}/verify-email/${token}`,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error("Error sending email:", error);
-    } else {
-      console.log("Email sent:", info.response);
-    }
-  });
+  const info = await transporter.sendMail(mailOptions);
+
+  console.log("Email sent:", info.response);
+
+  return info;
 };
