@@ -112,6 +112,8 @@ export const verify = async (req, res) => {
 export const reVerify = async (req, res) => {
   try {
     const { email } = req.body || {};
+    console.log("Reverify email:", JSON.stringify(email));
+    console.log("Mongo URI exists:", !!process.env.MONGO_URI);
 
     if (!email) {
       return res.status(400).json({
@@ -121,6 +123,7 @@ export const reVerify = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
+    console.log("Found user:", user ? user.email : "NOT FOUND");
 
     if (!user) {
       return res.status(404).json({

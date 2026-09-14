@@ -17,11 +17,12 @@ const VerifyEmail = () => {
             Authorization: `Bearer ${token}`
           }
         });
+        console.log(response)
         if (response.data.success) {
           setStatus("✅ Email verified Successfully!");
           setTimeout(() => {
             navigate("/login");
-          },2000);
+          },1000);
         }
     } catch (error) {
       console.log(error);
