@@ -1,34 +1,47 @@
-import nodemailer from "nodemailer";
-import crypto from "crypto";
-import {User} from "../models/userModel.js";
 import dotenv from "dotenv";
 
 dotenv.config();
 
+export const sendVerificationEmail = async (token, email) => {
+  try {
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "api-key": process.env.BREVO_MAIL,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: {
+          name: "Milan Ecommerce",
+          email: process.env.BREVO_SENDER_EMAIL,
+        },
+        to: [
+          {
+            email,
+          },
+        ],
+        subject: "Email Verification",
+        htmlContent: `
+          <p>Please verify your email by clicking the following link:</p>
+          <p>
+            <a href="${process.env.FRONTEND_URL}/verify-email/${token}">
+              Verify Email
+            </a>
+          </p>
+        `,
+      }),
+    });
 
-export const sendVerificationEmail = (token, email) => {
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
+    const data = await response.json();
 
-  const mailOptions = {
-    from: process.env.MAIL_USER,
-    to: email,
-    subject: "Email Verification",
-    text: `Please verify your email by clicking the following link: ${process.env.FRONTEND_URL}/verify-email/${token}`,
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error("Error sending email:", error);
-    } else {
-      console.log("Email sent:", info.response);
+    if (!response.ok) {
+      console.error("Brevo email error:", data);
+      return;
     }
-  });
+
+    console.log("Verification email sent:", data.messageId);
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+  }
 };

@@ -1,32 +1,43 @@
-import nodemailer from "nodemailer";
-import crypto from "crypto";
-import {User} from "../models/userModel.js";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-
 export const sendOTPemail = async (otp, email) => {
-  const transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
+  try {
+    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "api-key": process.env.BREVO_MAIL,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        sender: {
+          name: "Milan Ecommerce",
+          email: process.env.BREVO_SENDER_EMAIL,
+        },
+        to: [
+          {
+            email,
+          },
+        ],
+        subject: "Password Reset OTP",
+        htmlContent: `
+          <p>Your OTP for password reset is: <b>${otp}</b>.</p>
+          <p>It is valid for 10 minutes.</p>
+        `,
+      }),
+    });
 
-  const mailOptions = {
-    from: process.env.MAIL_USER,
-    to: email,
-    subject: "password reset OTP",
-   html : `<p>Your OTP for password reset is: <b>${otp}</b>. It is valid for 10 minutes.</p>`,
-  };
+    const data = await response.json();
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error("Error sending email:", error);
-    } else {
-      console.log("OTP email sent:", info.response);
+    if (!response.ok) {
+      console.error("Brevo email error:", data);
+      return;
     }
-  });
+
+    console.log("OTP email sent:", data.messageId);
+  } catch (error) {
+    console.error("Error sending OTP email:", error);
+  }
 };
