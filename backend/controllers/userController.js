@@ -110,6 +110,7 @@ export const verify = async (req, res) => {
 };
 
 export const reVerify = async (req, res) => {
+  console.log("REVERIFY ROUTE HIT");
   try {
     const { email } = req.body || {};
     console.log("Reverify email:", JSON.stringify(email));
